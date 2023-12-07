@@ -12,6 +12,7 @@
 #include <limits.h>
 #include <fcntl.h>
 #include <signal.h>
+#include <sys/wait.h>
 extern char **environ;
 
 /*is_file*/
