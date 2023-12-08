@@ -8,7 +8,7 @@
 #define MAX_ARGUMENTS 10
 
 void display_prompt() {
-    write(STDOUT_FILENO, "($)\n", 4);
+    write(STDOUT_FILENO, "$ ", 2);
 }
 
 void execute_command(char *command, char **arguments) {
