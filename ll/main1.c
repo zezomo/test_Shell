@@ -7,35 +7,47 @@
 #define MAX_COMMAND_LENGTH 100
 #define MAX_ARGUMENTS 10
 
-void display_prompt() {
-	    if (write(STDOUT_FILENO, "($)\n", 4) == -1) {
-		            perror("write");
-			            exit(EXIT_FAILURE);
-				        }
+void display_prompt()
+{
+	if (write(STDOUT_FILENO, "$ ", 2) == -1)
+	{
+		perror("write");
+		exit(EXIT_FAILURE);
+	}
 }
 
-void execute_command(char *command, char **arguments) {
-	    pid_t pid = fork();
+void execute_command(char *command, char **arguments)
+{
+	pid_t pid;
+	pid = fork();
 
-	        if (pid == -1) {
-			        perror("fork");
-				        exit(EXIT_FAILURE);
-					    } else if (pid == 0) {
-						            execvp(command, arguments);
-							            perror("execvp");
-								            exit(EXIT_FAILURE);
-									        } else {
-											        if (waitpid(pid, NULL, 0) == -1) {
-													            perror("waitpid");
-														                exit(EXIT_FAILURE);
-																        }
-												    }
+	if (pid == -1)
+	{
+		perror("fork");
+	        exit(EXIT_FAILURE);
+	}
+	else if (pid == 0)
+	{
+		execvp(command, arguments);
+     		perror("execvp");
+		exit(EXIT_FAILURE);
+	}
+	else
+	{
+	if (waitpid(pid, NULL, 0) == -1)
+	{
+		perror("waitpid");
+		exit(EXIT_FAILURE);
+	}												    }
 }
 
-void copy_and_execute(char *source, char *destination, char **arguments) {
-	    pid_t pid = fork();
+void copy_and_execute(char *source, char *destination, char **arguments)
+{
+	    pid_t pid;
 
-	        if (pid == -1) {
+	    pid = fork();
+
+	    if (pid == -1) {
 			        perror("fork");
 				        exit(EXIT_FAILURE);
 					    } else if (pid == 0) {
@@ -53,9 +65,17 @@ void copy_and_execute(char *source, char *destination, char **arguments) {
 }
 
 int main(int argc, char **argv) {
-	    char *input = NULL;
-	        size_t len = 0;
-		    ssize_t read;
+
+
+
+	char *input = NULL;
+	size_t len = 0;
+	ssize_t read;
+	char *token;
+	char *tokens[MAX_ARGUMENTS + 2];
+	int token_count = 0;
+
+	(void)argv;
 
 		        if (argc == 1 && isatty(STDIN_FILENO)) {
 				        while (1) {
@@ -72,10 +92,6 @@ int main(int argc, char **argv) {
 															                }
 
 										                input[strcspn(input, "\n")] = 0;
-
-												            char *token;
-													                char *tokens[MAX_ARGUMENTS + 2];
-															            int token_count = 0;
 
 																                token = strtok(input, " ");
 																		            while (token != NULL && token_count < MAX_ARGUMENTS + 1) {
@@ -94,14 +110,14 @@ int main(int argc, char **argv) {
 																									                }
 																						            }
 					    } else {
+
+						   char *token;                                                                          char *tokens[MAX_ARGUMENTS + 2];
+													                                                                                 int token_count = 0;
 						            while ((read = getline(&input, &len, stdin)) != -1) {
 								                input[strcspn(input, "\n")] = 0;
 
-										            char *token;
-											                char *tokens[MAX_ARGUMENTS + 2];
-													            int token_count = 0;
 
-														                token = strtok(input, " ");
+									                token = strtok(input, " ");
 																            while (token != NULL && token_count < MAX_ARGUMENTS + 1) {
 																		                    tokens[token_count++] = token;
 																				                    token = strtok(NULL, " ");
