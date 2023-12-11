@@ -17,39 +17,39 @@ void execute_command(char *command, char **arguments)
 {
 	    pid_t pid;
 	        int status;
+		    int exit_status;
 
-		    pid = fork();
+		        pid = fork();
 
-		        if (pid == -1)
-				    {
-					            perror("fork");
-						        }
-			    else if (pid == 0)
+			    if (pid == -1)
 				        {
-						        if (strcmp(command, "exit") == 0)
-								        {
-										            exit(EXIT_SUCCESS);
-											            }
-							        else
-									        {
-											            execvp(command, arguments);
-												                perror("execvp");
-														            exit(EXIT_FAILURE);
-															            }
-								    }
-			        else
+						        perror("fork");
+							    }
+			        else if (pid == 0)
 					    {
-						            waitpid(pid, &status, 0);
-
-							            if (WIFEXITED(status))
+						            if (strcmp(command, "exit") == 0)
+								            {
+										                exit(EXIT_SUCCESS);
+												        }
+							            else
 									            {
-											                int exit_status = WEXITSTATUS(status);
-													            if (exit_status != 0)
-															                {
-																		                exit(exit_status);
-																				            }
-														            }
+											                execvp(command, arguments);
+													            perror("execvp");
+														                exit(EXIT_FAILURE);
+																        }
 								        }
+				    else
+					        {
+							        waitpid(pid, &status, 0);
+								        if (WIFEXITED(status))
+										        {
+												            exit_status = WEXITSTATUS(status);
+													                if (exit_status != 0)
+																            {
+																		                    exit(exit_status);
+																				                }
+															        }
+									    }
 }
 
 
@@ -123,7 +123,7 @@ void handle_exit_command(char **tokens)
 						         }
 }
 
-void handle_non_exit_command(char **tokens)
+void handle_any_command(char **tokens)
 {
 	  char *command = tokens[0];
 	    char *path;
@@ -173,7 +173,7 @@ void process_input(char *input)
 					        else
 							    {
 								          handle_exit_command(tokens);
-									        handle_non_exit_command(tokens);
+									        handle_any_command(tokens);
 										    }
 						  }
 }
