@@ -112,58 +112,28 @@ void handle_exit_command(char **tokens)
 						        }
 }
 
-char *get_v(char *namev)
-{
-	    char **v;
-	        int len_of_variable;
+void handle_env_command(char **tokens) {
+	    char **env;
+	        char *filtered_vars[] = {"GLIBCPP_FORCE_NEW", "GLIBCXX_FORCE_NEW", "LD_PRELOAD", "LD_LIBRARY_PATH", "_", "PWD", NULL};
+		    int i;
 
-		    if (namev == NULL || namev[0] == '\0')
-			            return NULL;
-		        len_of_variable = (int)strlen(namev);
+		        if (strcmp(tokens[0], "env") == 0) {
 
-			    for (v = environ; *v != NULL; v++)
-				        {
-						        if (strncmp(*v, namev, len_of_variable) == 0)
-								        {
-										            if ((*v)[len_of_variable] == '=')
-												                    return (*v + len_of_variable + 1);
-											            }
-							    }
-			        return NULL;
-}
+				        for (env = environ; *env != NULL; env++) {
+						            for (i = 0; filtered_vars[i] != NULL; i++) {
+								                    if (strncmp(*env, filtered_vars[i], strlen(filtered_vars[i])) == 0) {
+											                        unsetenv(filtered_vars[i]);
+														                    break;
+																                    }
+										                }
+							            }
 
-void P_env(void)
-{
-	    int i, j;
+					        setenv("HBTN", "Holberton", 1);
 
-	        for (i = 0; environ[i] != NULL; i++)
-			    {
-				            for (j = 0; environ[i][j] != '\0'; j++)
-						                write(STDOUT_FILENO, &environ[i][j], 1);
-					            write(STDOUT_FILENO, "\n", 1);
-						        }
-}
-
-void handle_env_command(char **tokens)
-{
-	    char *command = tokens[0];
-	        char *value;
-
-		    if (strcmp(command, "env") == 0)
-			        {
-					        if (tokens[1] != NULL)
-							        {
-									            value = get_v(tokens[1]);
-										                if (value != NULL)
-													            {
-															                    write(STDOUT_FILENO, value, strlen(value));
-																	                    write(STDOUT_FILENO, "\n", 1);
-																			                }
-												        }
-						        else
-								        {
-										            P_env();
-											            }
+						        for (env = environ; *env != NULL; env++) {
+								            write(STDOUT_FILENO, *env, strlen(*env));
+									                write(STDOUT_FILENO, "\n", 1);
+											        }
 							    }
 }
 
