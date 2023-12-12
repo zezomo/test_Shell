@@ -17,39 +17,39 @@ void execute_command(char *command, char **arguments)
 {
 	    pid_t pid;
 	        int status;
-		    int exit_status;
 
-		        pid = fork();
+		    pid = fork();
 
-			    if (pid == -1)
+		        if (pid == -1)
+				    {
+					            perror("fork");
+						        }
+			    else if (pid == 0)
 				        {
-						        perror("fork");
-							    }
-			        else if (pid == 0)
+						        if (strcmp(command, "exit") == 0)
+								        {
+										            exit(EXIT_SUCCESS);
+											            }
+							        else
+									        {
+											            execvp(command, arguments);
+												                perror("execvp");
+														            exit(EXIT_FAILURE);
+															            }
+								    }
+			        else
 					    {
-						            if (strcmp(command, "exit") == 0)
-								            {
-										                exit(EXIT_SUCCESS);
-												        }
-							            else
+						            waitpid(pid, &status, 0);
+
+							            if (WIFEXITED(status))
 									            {
-											                execvp(command, arguments);
-													            perror("execvp");
-														                exit(EXIT_FAILURE);
-																        }
+											                int exit_status = WEXITSTATUS(status);
+													            if (exit_status != 0)
+															                {
+																		                exit(exit_status);
+																				            }
+														            }
 								        }
-				    else
-					        {
-							        waitpid(pid, &status, 0);
-								        if (WIFEXITED(status))
-										        {
-												            exit_status = WEXITSTATUS(status);
-													                if (exit_status != 0)
-																            {
-																		                    exit(exit_status);
-																				                }
-															        }
-									    }
 }
 
 
