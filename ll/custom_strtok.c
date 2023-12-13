@@ -9,7 +9,7 @@
 
 char *custom_strtok(char *str, const char *delim)
 {
-	    static char *saveptr = NULL;
+	    static char *saveptr;
 	        char *token;
 		    char *p;
 
@@ -40,3 +40,4 @@ char *custom_strtok(char *str, const char *delim)
 
 						        return (token);
 }
+

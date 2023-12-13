@@ -1,5 +1,8 @@
 #include "projectshell.h"
 
+int compare_strings(const void *a, const void *b) {
+	    return strcmp(*(const char **)a, *(const char **)b);
+}
 
 /**
  *  * handle_env_command - this is a function believe me
@@ -7,25 +10,33 @@
  *    * Return: return pointer of string
  *    */
 
-void handle_env_command(char **tokens)
-{
-	    char **envp = environ;
+void handle_env_command() {
+	    int count = 0;
+	        char **env_copy = malloc((count + 1) * sizeof(char *));
+		    int i;
+		        int j;
+			    int k;
 
+			        while (environ[count] != NULL) {
+					        count++;
+						    }
 
-	      if (tokens[1] != NULL)
-		        {
-				    fprintf(stderr, "env: unexpected arguments\n");
-				        return;
-					  }
+				        for (i = 0; i < count; i++) {
+						        env_copy[i] = strdup(environ[i]);
+							    }
+					    env_copy[count] = NULL;
 
+					        qsort(env_copy, count, sizeof(char *), compare_strings);
 
-	        while (*envp != NULL)
-			  {
-				      printf("%s\n", *envp);
-				          envp++;
-					    }
+						    for (j = 0; j < count; j++) {
+							            printf("%s\n", env_copy[j]);
+								        }
+
+						        for (k = 0; k < count; k++) {
+								        free(env_copy[k]);
+									    }
+							    free(env_copy);
 }
-
 /**
  *  * handle_exit_command - this is a function believe me
  *   * @tokens: did you really will read this
@@ -100,7 +111,7 @@ void process_input(char *input)
 			        {
 					    if (strcmp(tokens[0], "env") == 0)
 						        {
-								      handle_env_command(tokens);
+								      handle_env_command();
 								          }
 					        else if (strcmp(tokens[0], "exit") == 0)
 							    {
