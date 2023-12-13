@@ -7,7 +7,6 @@
  *    * Return: return pointer of string
  *    */
 
-
 void handle_env_command(char **tokens)
 {
 	    char **envp = environ;
@@ -69,12 +68,6 @@ void handle_any_command(char **tokens)
 						    {
 							          tokens[0] = command;
 								      }
-					    else if
-						          (strcmp(command, "env") == 0)
-								      {
-									            handle_env_command(tokens);
-										          return;
-											      }
 					        else
 							    {
 								          fprintf(stderr, "%s: command not found\n", command);
